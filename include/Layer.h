@@ -1,4 +1,4 @@
-// include/layers/Layer.h
+// include/Layer.h
 #ifndef LAYER_H
 #define LAYER_H
 

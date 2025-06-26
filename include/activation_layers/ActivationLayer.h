@@ -1,4 +1,4 @@
-// include/ActivationLayer.h
+// include/activation_layers/ActivationLayer.h
 #ifndef ACTIVATION_LAYER_H
 #define ACTIVATION_LAYER_H
 

@@ -1,3 +1,4 @@
+// src/activation_layers/Sigmoid.cpp
 #include "activation_layers/Sigmoid.h"
 
 vector<vector<vector<float>>> Sigmoid::apply(const vector<vector<vector<float>>> &input)

@@ -1,4 +1,4 @@
-// include/ReLU.h
+// include/activation_layers/ReLU.h
 #ifndef RELU_H
 #define RELU_H
 

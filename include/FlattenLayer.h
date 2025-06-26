@@ -1,4 +1,4 @@
-// include/layers/FlattenLayer.h
+// include/FlattenLayer.h
 #ifndef FLATTEN_LAYER_H
 #define FLATTEN_LAYER_H
 

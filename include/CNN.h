@@ -1,4 +1,4 @@
-// include/Filter.h
+// include/CNN.h
 #ifndef CNN_H
 #define CNN_H
 

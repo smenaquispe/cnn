@@ -1,3 +1,4 @@
+// src/pooling_layers/AveragePooling.cpp
 #include "pooling_layers/AveragePooling.h"
 
 vector<vector<vector<float>>> AveragePooling::apply(const vector<vector<vector<float>>> &input)

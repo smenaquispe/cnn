@@ -1,4 +1,4 @@
-// include/Sigmoid.h
+// include/activation_layers/Sigmoid.h
 #ifndef SIGMOID_H
 #define SIGMOID_H
 

@@ -1,4 +1,4 @@
-// include/Tanh.h
+// include/activation_layers/Tanh.h
 #ifndef TANH_H
 #define TANH_H
 

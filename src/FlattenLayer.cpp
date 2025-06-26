@@ -1,3 +1,4 @@
+// src/FlattenLayer.cpp
 #include "FlattenLayer.h"
 
  vector<vector<vector<float>>> FlattenLayer::apply(const vector<vector<vector<float>>> &input)
