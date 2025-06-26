@@ -4,6 +4,7 @@
 
 #include <vector>
 #include "Filter.h"
+#include "Layer.h"
 
 using namespace std;
 
@@ -14,6 +15,9 @@ private:
     int stride;
     int padding;
     vector<vector<float>> input;
+    vector<Layer*> layers;
+
+    int idxLayer = 0;
 
 public:
     CNN() = default;
@@ -39,6 +43,11 @@ public:
         this->input = inputData;
         return *this;
     }
+    CNN &addLayer(Layer *layer)
+    {
+        layers.push_back(layer);
+        return *this;
+    }
 
     // getters
     vector<Filter> getFilters() const { return filters; }
@@ -49,6 +58,9 @@ public:
     // methods
     vector<vector<vector<float>>> convolve(const vector<vector<float>> &input);
     vector<vector<float>> addPadding(const vector<vector<float>> &input);
+    vector<vector<vector<float>>> applyLayers(const vector<vector<vector<float>>> &input);
+    vector<vector<vector<float>>> applyNextLayer(const vector<vector<vector<float>>> &input);
+    
 };
 
 #endif // CNN_H

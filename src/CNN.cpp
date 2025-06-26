@@ -58,3 +58,37 @@ vector<vector<vector<float>>> CNN::convolve(const vector<vector<float>> &input)
 
     return output;
 }
+
+vector<vector<vector<float>>> CNN::applyLayers(const vector<vector<vector<float>>> &input)
+{
+    vector<vector<vector<float>>> output = input;
+    for (auto &layer : layers)
+    {
+        output = layer->apply(output);
+    }
+    return output;
+}
+
+vector<vector<vector<float>>> CNN::applyNextLayer(const vector<vector<vector<float>>> &input)
+{
+    if (layers.empty())
+    {
+        cerr << "No layers to apply." << endl;
+        return input;
+    }
+
+    if (idxLayer >= layers.size())
+    {
+        cerr << "No more layers to apply." << endl;
+        return input;
+    }
+
+    Layer *layer = layers[idxLayer++];
+    if (!layer)
+    {
+        cerr << "Layer is null." << endl;
+        return input;
+    }
+
+    return layer->apply(input);
+}
