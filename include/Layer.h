@@ -2,16 +2,14 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include <vector>
-
-using namespace std;
+#include "Tensor.h"
 
 class Layer
 {
 public:
     virtual ~Layer() = default;
 
-    virtual vector<vector<vector<float>>> apply(const vector<vector<vector<float>>> &input) = 0;
+    virtual Tensor apply(const Tensor &input) = 0;
 };
 
 #endif // LAYER_H

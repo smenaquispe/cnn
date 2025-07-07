@@ -1,66 +1,61 @@
-// include/CNN.h
 #ifndef CNN_H
 #define CNN_H
 
 #include <vector>
 #include "Filter.h"
 #include "Layer.h"
-
-using namespace std;
+#include "Tensor.h"
 
 class CNN
 {
 private:
-    vector<Filter> filters;
+    std::vector<Filter> filters;
     int stride;
     int padding;
-    vector<vector<float>> input;
-    vector<Layer*> layers;
-
+    Tensor input;                      
+    std::vector<Layer*> layers;
     int idxLayer = 0;
 
 public:
     CNN() = default;
 
     // setters
-    CNN &setFilters(const vector<Filter> &filters)
-    {
+    CNN &setFilters(const std::vector<Filter> &filters) {
         this->filters = filters;
         return *this;
     }
-    CNN &setStride(int stride)
-    {
+
+    CNN &setStride(int stride) {
         this->stride = stride;
         return *this;
     }
-    CNN &setPadding(int padding)
-    {
+
+    CNN &setPadding(int padding) {
         this->padding = padding;
         return *this;
     }
-    CNN &setInput(const vector<vector<float>> &inputData)
-    {
+
+    CNN &setInput(const Tensor &inputData) {
         this->input = inputData;
         return *this;
     }
-    CNN &addLayer(Layer *layer)
-    {
+
+    CNN &addLayer(Layer *layer) {
         layers.push_back(layer);
         return *this;
     }
 
     // getters
-    vector<Filter> getFilters() const { return filters; }
+    std::vector<Filter> getFilters() const { return filters; }
     int getStride() const { return stride; }
     int getPadding() const { return padding; }
-    vector<vector<float>> getInput() const { return input; }
+    Tensor getInput() const { return input; }
 
     // methods
-    vector<vector<vector<float>>> convolve(const vector<vector<float>> &input);
-    vector<vector<float>> addPadding(const vector<vector<float>> &input);
-    vector<vector<vector<float>>> applyLayers(const vector<vector<vector<float>>> &input);
-    vector<vector<vector<float>>> applyNextLayer(const vector<vector<vector<float>>> &input);
-    
+    Tensor convolve(const Tensor &input);
+    Tensor addPadding(const Tensor &input);
+    Tensor applyLayers(const Tensor &input);
+    Tensor applyNextLayer(const Tensor &input);
 };
 
 #endif // CNN_H

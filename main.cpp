@@ -19,11 +19,11 @@ int main()
     {
         Filter filter;
         filter.setWidth(3).setHeight(3).initWeights();
-        printMatrix(filter.getWeights(), "Filter " + to_string(i + 1) + " weights");
+        printTensor(filter.getWeights(), "Filter " + to_string(i + 1) + " weights");
         filters.push_back(filter);
     }
 
-    auto input = loadInputFromFile("/home/smenaq/UNSA/cnn/input.txt");
+    auto input = loadInputFromFileAsTensor("/home/smenaq/UNSA/cnn/input.txt");
 
     CNN cnn;
     ReLU relu; 
@@ -42,19 +42,18 @@ int main()
     auto output = cnn.convolve(cnn.getInput());
 
     cout << "Convolution output:\n";
-    printMatrix(cnn.getInput(), "Input");
+    printTensor(cnn.getInput(), "Input");
     
-    prinFeatures(output, "Convolution - Feature maps");
+    printTensor(output, "Convolution - Feature maps");
 
     output = cnn.applyNextLayer(output);
-    prinFeatures(output, "ReLU activation - Feature maps");
+    printTensor(output, "ReLU activation - Feature maps");
 
     output = cnn.applyNextLayer(output);
-    prinFeatures(output, "MaxPooling - Feature maps");
+    printTensor(output, "MaxPooling - Feature maps");
 
     output = cnn.applyNextLayer(output);
-    auto flattenOutput = flatten.getFlattenedOutput();
-    printFlattened(flattenOutput, "Flattened output");
+    printFlattenedTensor(output, "Flattened output");
 
 
     return 0;

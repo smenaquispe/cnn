@@ -1,44 +1,42 @@
-// include/Filter.h
 #ifndef FILTER_H
 #define FILTER_H
 
-#include <vector>
-using namespace std;
+#include "Tensor.h"
 
 class Filter
 {
 private:
-    int width;
-    int height;
-    vector<vector<float>> weights;
-
+    Tensor weights;  // Ahora usamos Tensor
+    size_t width;
+    size_t height;
+    
 public:
-    Filter() = default;
+    Filter() : width(0), height(0) {}
 
-    // setters
-    Filter &setWidth(int w)
-    {
-        width = w;
-        return *this;
-    }
-    Filter &setHeight(int h)
-    {
-        height = h;
-        return *this;
-    }
-    Filter &setWeights(const vector<vector<float>> &w)
-    {
+    // Setters
+    Filter &setWeights(const Tensor &w) {
         weights = w;
         return *this;
     }
 
-    // getters
-    int getWidth() const { return width; }
-    int getHeight() const { return height; }
-    const vector<vector<float>> &getWeights() const { return weights; }
+    Filter &setWidth(size_t w) {
+        width = w;
+        return *this;
+    }
 
-    // methods
-    Filter &initWeights();
+    Filter &setHeight(size_t h) {
+        height = h;
+        return *this;
+    }
+
+    Filter &initWeights(const std::vector<size_t> &shape);  // CxHxW o HxW
+    Filter &initWeights();  // Use width and height
+
+    // Getters
+    const Tensor &getWeights() const { return weights; }
+    const std::vector<size_t> &getShape() const { return weights.shape; }
+    size_t getWidth() const { return width; }
+    size_t getHeight() const { return height; }
 };
 
 #endif // FILTER_H

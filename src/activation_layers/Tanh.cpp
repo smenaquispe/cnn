@@ -1,18 +1,12 @@
 // src/activation_layers/Tanh.cpp
 #include "activation_layers/Tanh.h"
 
-vector<vector<vector<float>>> Tanh::apply(const vector<vector<vector<float>>> &input)
+Tensor Tanh::apply(const Tensor &input)
 {
-    auto output = input;
-    for (auto &channel : output)
+    Tensor output = input;
+    for (auto &x : output.data)
     {
-        for (auto &row : channel)
-        {
-            for (auto &value : row)
-            {
-                value = tanh(value);
-            }
-        }
+        x = std::tanh(x);
     }
     return output;
 }

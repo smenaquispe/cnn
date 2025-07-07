@@ -1,36 +1,14 @@
 // src/FlattenLayer.cpp
 #include "FlattenLayer.h"
 
- vector<vector<vector<float>>> FlattenLayer::apply(const vector<vector<vector<float>>> &input)
+Tensor FlattenLayer::apply(const Tensor &input)
 {
-    flattenedOutput.clear();
-    for (const auto &channel : input)
-    {
-        for (const auto &row : channel)
-        {
-            for (float val : row)
-            {
-                flattenedOutput.push_back(val);
-            }
-        }
-    }
-
-    return {{{}}}; 
+    flattenedOutput.data = input.data;
+    flattenedOutput.shape = {input.totalSize()}; // 1D: vector con todos los valores
+    return flattenedOutput;
 }
 
-void FlattenLayer::apply2D(const vector<vector<float>> &input)
-{
-    flattenedOutput.clear();
-    for (const auto &row : input)
-    {
-        for (float val : row)
-        {
-            flattenedOutput.push_back(val);
-        }
-    }
-}
-
-const vector<float> &FlattenLayer::getFlattenedOutput() const
+const Tensor &FlattenLayer::getFlattenedOutput() const
 {
     return flattenedOutput;
 }

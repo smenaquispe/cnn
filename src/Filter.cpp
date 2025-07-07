@@ -1,20 +1,27 @@
-// src/Filter.cpp
 #include "Filter.h"
 #include <cstdlib>
-#include <vector>
-#include <iostream>
+#include <ctime>
+#include <stdexcept>
 
-using namespace std;
+Filter &Filter::initWeights(const std::vector<size_t> &shape)
+{
+    weights.shape = shape;
+    size_t total = weights.totalSize();
+    weights.data.resize(total);
+
+    for (size_t i = 0; i < total; ++i)
+    {
+        weights.data[i] = static_cast<float>(rand()) / RAND_MAX;
+    }
+
+    return *this;
+}
 
 Filter &Filter::initWeights()
 {
-    weights.resize(height, vector<float>(width));
-    for (int i = 0; i < height; ++i)
-    {
-        for (int j = 0; j < width; ++j)
-        {
-            weights[i][j] = static_cast<float>(rand()) / RAND_MAX;
-        }
+    if (width == 0 || height == 0) {
+        throw std::invalid_argument("Width and height must be set before initializing weights");
     }
-    return *this;
+    
+    return initWeights({height, width});
 }

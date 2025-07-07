@@ -21,21 +21,39 @@ public:
     virtual ~PoolingLayer() = default;
 
 protected:
-    vector<vector<float>> pad(const vector<vector<float>> &input)
+    // Pad a single channel (2D) within a tensor
+    Tensor padChannel(const Tensor &input, size_t channelIdx)
     {
         if (padding == 0)
             return input;
 
-        int H = input.size();
-        int W = input[0].size();
-        int newH = H + 2 * padding;
-        int newW = W + 2 * padding;
+        auto shape = input.getShape();
+        if (shape.size() != 3) {
+            throw std::invalid_argument("Input tensor must be 3D (channels, height, width)");
+        }
 
-        vector<vector<float>> padded(newH, vector<float>(newW, 0.0f));
+        size_t channels = shape[0];
+        size_t H = shape[1];
+        size_t W = shape[2];
+        size_t newH = H + 2 * padding;
+        size_t newW = W + 2 * padding;
 
-        for (int i = 0; i < H; ++i)
-            for (int j = 0; j < W; ++j)
-                padded[i + padding][j + padding] = input[i][j];
+        Tensor padded;
+        padded.shape = {channels, newH, newW};
+        padded.data.resize(padded.totalSize(), 0.0f);
+
+        // Copy all channels, padding the specified channel
+        for (size_t c = 0; c < channels; ++c) {
+            for (size_t i = 0; i < H; ++i) {
+                for (size_t j = 0; j < W; ++j) {
+                    if (c == channelIdx) {
+                        padded.at({c, i + padding, j + padding}) = input.at({c, i, j});
+                    } else {
+                        padded.at({c, i, j}) = input.at({c, i, j});
+                    }
+                }
+            }
+        }
 
         return padded;
     }

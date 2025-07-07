@@ -9,7 +9,7 @@ class ReLU : public ActivationLayer
 {
 public:
    ~ReLU() override = default;
-   vector<vector<vector<float>>> apply(const vector<vector<vector<float>>> &input) override;
+   Tensor apply(const Tensor &input) override;
 };
 
 #endif // RELU_H

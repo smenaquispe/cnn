@@ -9,7 +9,7 @@ class Tanh : public ActivationLayer
 {
 public:
     ~Tanh() override = default;
-    vector<vector<vector<float>>> apply(const vector<vector<vector<float>>> &input) override;
+    Tensor apply(const Tensor &input) override;
 };
 
 #endif // TANH_H

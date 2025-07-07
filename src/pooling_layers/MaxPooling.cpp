@@ -1,41 +1,64 @@
 // src/pooling_layers/MaxPooling.cpp
 #include "pooling_layers/MaxPooling.h"
 
-
-vector<vector<vector<float>>> MaxPooling::apply(const vector<vector<vector<float>>> &input)
+Tensor MaxPooling::apply(const Tensor &input)
 {
-    vector<vector<vector<float>>> output;
+    auto shape = input.getShape();
+    if (shape.size() != 3) {
+        throw std::invalid_argument("Input tensor must be 3D (channels, height, width)");
+    }
 
-    for (const auto &channel : input)
-    {
-        auto padded = pad(channel);
-        int H = padded.size();
-        int W = padded[0].size();
+    size_t channels = shape[0];
+    size_t H = shape[1];
+    size_t W = shape[2];
 
-        int outH = (H - poolHeight) / stride + 1;
-        int outW = (W - poolWidth) / stride + 1;
-
-        vector<vector<float>> pooled(outH, vector<float>(outW, 0.0f));
-
-        for (int i = 0; i < outH; ++i)
-        {
-            for (int j = 0; j < outW; ++j)
-            {
-                float maxVal = -1e9;
-                for (int m = 0; m < poolHeight; ++m)
-                {
-                    for (int n = 0; n < poolWidth; ++n)
-                    {
-                        int y = i * stride + m;
-                        int x = j * stride + n;
-                        maxVal = max(maxVal, padded[y][x]);
-                    }
+    // Apply padding if needed
+    Tensor processedInput = input;
+    if (padding > 0) {
+        size_t newH = H + 2 * padding;
+        size_t newW = W + 2 * padding;
+        
+        processedInput.shape = {channels, newH, newW};
+        processedInput.data.resize(processedInput.totalSize(), 0.0f);
+        
+        // Copy with padding
+        for (size_t c = 0; c < channels; ++c) {
+            for (size_t i = 0; i < H; ++i) {
+                for (size_t j = 0; j < W; ++j) {
+                    processedInput.at({c, i + padding, j + padding}) = input.at({c, i, j});
                 }
-                pooled[i][j] = maxVal;
             }
         }
+        
+        H = newH;
+        W = newW;
+    }
 
-        output.push_back(pooled);
+    // Calculate output dimensions
+    size_t outH = (H - poolHeight) / stride + 1;
+    size_t outW = (W - poolWidth) / stride + 1;
+
+    Tensor output;
+    output.shape = {channels, outH, outW};
+    output.data.resize(output.totalSize(), 0.0f);
+
+    // Apply max pooling to each channel
+    for (size_t c = 0; c < channels; ++c) {
+        for (size_t i = 0; i < outH; ++i) {
+            for (size_t j = 0; j < outW; ++j) {
+                float maxVal = -1e9;
+                for (int m = 0; m < poolHeight; ++m) {
+                    for (int n = 0; n < poolWidth; ++n) {
+                        size_t y = i * stride + m;
+                        size_t x = j * stride + n;
+                        if (y < H && x < W) {
+                            maxVal = std::max(maxVal, processedInput.at({c, y, x}));
+                        }
+                    }
+                }
+                output.at({c, i, j}) = maxVal;
+            }
+        }
     }
 
     return output;

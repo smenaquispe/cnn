@@ -1,18 +1,12 @@
 // src/activation_layers/Sigmoid.cpp
 #include "activation_layers/Sigmoid.h"
 
-vector<vector<vector<float>>> Sigmoid::apply(const vector<vector<vector<float>>> &input)
+Tensor Sigmoid::apply(const Tensor &input)
 {
-    auto output = input;
-    for (auto &channel : output)
+    Tensor output = input;
+    for (auto &x : output.data)
     {
-        for (auto &row : channel)
-        {
-            for (auto &value : row)
-            {
-                value = 1.0f / (1.0f + exp(-value));
-            }
-        }
+        x = 1.0f / (1.0f + std::exp(-x));
     }
     return output;
 }

@@ -11,7 +11,7 @@ public:
     AveragePooling(int poolH, int poolW, int stride, int padding = 0)
         : PoolingLayer(poolH, poolW, stride, padding) {}
 
-    vector<vector<vector<float>>> apply(const vector<vector<vector<float>>> &input) override;
+    Tensor apply(const Tensor &input) override;
 };
 
 #endif // AVERAGE_POOLING_H

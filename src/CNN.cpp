@@ -1,57 +1,115 @@
-// src/CNN.cpp
 #include "CNN.h"
 #include <iostream>
 
-using namespace std;
-
-vector<vector<float>> CNN::addPadding(const vector<vector<float>> &input)
+Tensor CNN::addPadding(const Tensor &input)
 {
-    int input_h = input.size();
-    int input_w = input[0].size();
-    vector<vector<float>> padded(input_h + 2 * padding, vector<float>(input_w + 2 * padding, 0.0f));
-
-    for (int i = 0; i < input_h; ++i)
-    {
-        for (int j = 0; j < input_w; ++j)
-        {
-            padded[i + padding][j + padding] = input[i][j];
-        }
+    auto shape = input.getShape();
+    if (shape.size() != 2 && shape.size() != 3) {
+        throw std::invalid_argument("Input tensor must be 2D or 3D");
     }
 
-    return padded;
+    if (padding == 0) {
+        return input;
+    }
+
+    Tensor paddedTensor;
+    
+    if (shape.size() == 2) {
+        // 2D case: H x W
+        size_t H = shape[0];
+        size_t W = shape[1];
+        size_t newH = H + 2 * padding;
+        size_t newW = W + 2 * padding;
+        
+        paddedTensor.shape = {newH, newW};
+        paddedTensor.data.resize(paddedTensor.totalSize(), 0.0f);
+        
+        for (size_t i = 0; i < H; ++i) {
+            for (size_t j = 0; j < W; ++j) {
+                paddedTensor.at({i + padding, j + padding}) = input.at({i, j});
+            }
+        }
+    } else {
+        // 3D case: C x H x W
+        size_t C = shape[0];
+        size_t H = shape[1];
+        size_t W = shape[2];
+        size_t newH = H + 2 * padding;
+        size_t newW = W + 2 * padding;
+        
+        paddedTensor.shape = {C, newH, newW};
+        paddedTensor.data.resize(paddedTensor.totalSize(), 0.0f);
+        
+        for (size_t c = 0; c < C; ++c) {
+            for (size_t i = 0; i < H; ++i) {
+                for (size_t j = 0; j < W; ++j) {
+                    paddedTensor.at({c, i + padding, j + padding}) = input.at({c, i, j});
+                }
+            }
+        }
+    }
+    
+    return paddedTensor;
 }
 
-vector<vector<vector<float>>> CNN::convolve(const vector<vector<float>> &input)
+Tensor CNN::convolve(const Tensor &inputTensor)
 {
-    vector<vector<float>> paddedInput = addPadding(input);
-    int input_h = paddedInput.size();
-    int input_w = paddedInput[0].size();
-    int num_filters = filters.size();
-    int fh = filters[0].getHeight();
-    int fw = filters[0].getWidth();
+    const std::vector<size_t> &shape = inputTensor.getShape();
 
-    int out_h = (input_h - fh) / stride + 1;
-    int out_w = (input_w - fw) / stride + 1;
-
-    vector<vector<vector<float>>> output(num_filters, vector<vector<float>>(out_h, vector<float>(out_w, 0.0f)));
-
-    for (int f = 0; f < num_filters; ++f)
+    if (shape.size() != 2 && shape.size() != 3)
     {
-        for (int i = 0; i < out_h; ++i)
+        throw std::invalid_argument("Solo se soportan entradas 2D (HxW) o 3D (CxHxW)");
+    }
+
+    size_t channels = (shape.size() == 3) ? shape[0] : 1;
+    size_t input_h = (shape.size() == 3) ? shape[1] : shape[0];
+    size_t input_w = (shape.size() == 3) ? shape[2] : shape[1];
+
+    // Convert to 3D tensor if needed
+    Tensor processedInput;
+    if (shape.size() == 2) {
+        processedInput.shape = {1, input_h, input_w};
+        processedInput.data = inputTensor.data;
+    } else {
+        processedInput = inputTensor;
+    }
+
+    // Apply padding
+    Tensor paddedInput = addPadding(processedInput);
+    auto paddedShape = paddedInput.getShape();
+    size_t padded_h = paddedShape[1];
+    size_t padded_w = paddedShape[2];
+
+    size_t num_filters = filters.size();
+    size_t fh = filters[0].getHeight();
+    size_t fw = filters[0].getWidth();
+    size_t out_h = (padded_h - fh) / stride + 1;
+    size_t out_w = (padded_w - fw) / stride + 1;
+
+    Tensor output;
+    output.shape = {num_filters, out_h, out_w};
+    output.data.resize(output.totalSize(), 0.0f);
+
+    for (size_t f = 0; f < num_filters; ++f)
+    {
+        for (size_t i = 0; i < out_h; ++i)
         {
-            for (int j = 0; j < out_w; ++j)
+            for (size_t j = 0; j < out_w; ++j)
             {
                 float sum = 0.0f;
-                for (int fi = 0; fi < fh; ++fi)
+                for (size_t c = 0; c < channels; ++c)
                 {
-                    for (int fj = 0; fj < fw; ++fj)
+                    for (size_t fi = 0; fi < fh; ++fi)
                     {
-                        int x = i * stride + fi;
-                        int y = j * stride + fj;
-                        sum += paddedInput[x][y] * filters[f].getWeights()[fi][fj];
+                        for (size_t fj = 0; fj < fw; ++fj)
+                        {
+                            size_t x = i * stride + fi;
+                            size_t y = j * stride + fj;
+                            sum += paddedInput.at({c, x, y}) * filters[f].getWeights().at({fi, fj});
+                        }
                     }
                 }
-                output[f][i][j] = sum;
+                output.at({f, i, j}) = sum;
             }
         }
     }
@@ -59,9 +117,9 @@ vector<vector<vector<float>>> CNN::convolve(const vector<vector<float>> &input)
     return output;
 }
 
-vector<vector<vector<float>>> CNN::applyLayers(const vector<vector<vector<float>>> &input)
+Tensor CNN::applyLayers(const Tensor &input)
 {
-    vector<vector<vector<float>>> output = input;
+    Tensor output = input;
     for (auto &layer : layers)
     {
         output = layer->apply(output);
@@ -69,25 +127,22 @@ vector<vector<vector<float>>> CNN::applyLayers(const vector<vector<vector<float>
     return output;
 }
 
-vector<vector<vector<float>>> CNN::applyNextLayer(const vector<vector<vector<float>>> &input)
+Tensor CNN::applyNextLayer(const Tensor &input)
 {
     if (layers.empty())
     {
-        cerr << "No layers to apply." << endl;
-        return input;
+        throw std::runtime_error("No layers to apply.");
     }
 
     if (idxLayer >= layers.size())
     {
-        cerr << "No more layers to apply." << endl;
-        return input;
+        throw std::runtime_error("No more layers to apply.");
     }
 
     Layer *layer = layers[idxLayer++];
     if (!layer)
     {
-        cerr << "Layer is null." << endl;
-        return input;
+        throw std::runtime_error("Layer is null.");
     }
 
     return layer->apply(input);

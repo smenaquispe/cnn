@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include "Tensor.h"
 
 using namespace std;
 
@@ -29,4 +30,27 @@ vector<vector<float>> loadInputFromFile(const string& filename) {
 
     file.close();
     return input;
+}
+
+Tensor loadInputFromFileAsTensor(const string& filename) {
+    vector<vector<float>> input = loadInputFromFile(filename);
+    
+    if (input.empty()) {
+        return Tensor(); // Return empty tensor on error
+    }
+
+    size_t H = input.size();
+    size_t W = input[0].size();
+    
+    Tensor tensor;
+    tensor.shape = {H, W};
+    tensor.data.resize(tensor.totalSize());
+    
+    for (size_t i = 0; i < H; ++i) {
+        for (size_t j = 0; j < W; ++j) {
+            tensor.at({i, j}) = input[i][j];
+        }
+    }
+    
+    return tensor;
 }
