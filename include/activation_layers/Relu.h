@@ -7,9 +7,14 @@
 
 class ReLU : public ActivationLayer
 {
+private:
+    Tensor lastInput; 
+
 public:
    ~ReLU() override = default;
    Tensor apply(const Tensor &input) override;
+   Tensor backward(const Tensor &gradOutput);
+   const Tensor& getLastInput() const { return lastInput; }
 };
 
 #endif // RELU_H
