@@ -21,7 +21,6 @@ public:
     virtual ~PoolingLayer() = default;
 
 protected:
-    // Pad a single channel (2D) within a tensor
     Tensor padChannel(const Tensor &input, size_t channelIdx)
     {
         if (padding == 0)
@@ -42,7 +41,6 @@ protected:
         padded.shape = {channels, newH, newW};
         padded.data.resize(padded.totalSize(), 0.0f);
 
-        // Copy all channels, padding the specified channel
         for (size_t c = 0; c < channels; ++c) {
             for (size_t i = 0; i < H; ++i) {
                 for (size_t j = 0; j < W; ++j) {

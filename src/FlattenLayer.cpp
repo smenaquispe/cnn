@@ -4,7 +4,7 @@
 Tensor FlattenLayer::apply(const Tensor &input)
 {
     flattenedOutput.data = input.data;
-    flattenedOutput.shape = {input.totalSize()}; // 1D: vector con todos los valores
+    flattenedOutput.shape = {input.totalSize()}; 
     return flattenedOutput;
 }
 

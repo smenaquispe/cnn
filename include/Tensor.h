@@ -36,7 +36,6 @@ public:
         return data[flattenIndex(indices)];
     }
 
-    // Acceso 2D helper (cuando shape tiene al menos 2 dimensiones)
     float& at2D(size_t i, size_t j) {
         return at({i, j});
     }

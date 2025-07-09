@@ -12,7 +12,6 @@ Tensor AveragePooling::apply(const Tensor &input)
     size_t H = shape[1];
     size_t W = shape[2];
 
-    // Apply padding if needed
     Tensor processedInput = input;
     if (padding > 0) {
         size_t newH = H + 2 * padding;
@@ -34,7 +33,6 @@ Tensor AveragePooling::apply(const Tensor &input)
         W = newW;
     }
 
-    // Calculate output dimensions
     size_t outH = (H - poolHeight) / stride + 1;
     size_t outW = (W - poolWidth) / stride + 1;
 
@@ -42,7 +40,6 @@ Tensor AveragePooling::apply(const Tensor &input)
     output.shape = {channels, outH, outW};
     output.data.resize(output.totalSize(), 0.0f);
 
-    // Apply average pooling to each channel
     for (size_t c = 0; c < channels; ++c) {
         for (size_t i = 0; i < outH; ++i) {
             for (size_t j = 0; j < outW; ++j) {

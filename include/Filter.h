@@ -6,7 +6,7 @@
 class Filter
 {
 private:
-    Tensor weights;  // Ahora usamos Tensor
+    Tensor weights; 
     size_t width;
     size_t height;
     
@@ -29,8 +29,8 @@ public:
         return *this;
     }
 
-    Filter &initWeights(const std::vector<size_t> &shape);  // CxHxW o HxW
-    Filter &initWeights();  // Use width and height
+    Filter &initWeights(const std::vector<size_t> &shape);  
+    Filter &initWeights();
 
     // Getters
     const Tensor &getWeights() const { return weights; }

@@ -22,7 +22,6 @@ Tensor Softmax::apply(const Tensor &input)
         sum += output.data[i];
     }
     
-    // Normalize
     for (size_t i = 0; i < output.data.size(); ++i) {
         output.data[i] /= sum;
     }

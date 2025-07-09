@@ -30,7 +30,6 @@ Tensor CNN::addPadding(const Tensor &input)
             }
         }
     } else {
-        // 3D case: C x H x W
         size_t C = shape[0];
         size_t H = shape[1];
         size_t W = shape[2];
@@ -65,7 +64,6 @@ Tensor CNN::convolve(const Tensor &inputTensor)
     size_t input_h = (shape.size() == 3) ? shape[1] : shape[0];
     size_t input_w = (shape.size() == 3) ? shape[2] : shape[1];
 
-    // Convert to 3D tensor if needed
     Tensor processedInput;
     if (shape.size() == 2) {
         processedInput.shape = {1, input_h, input_w};
@@ -74,7 +72,6 @@ Tensor CNN::convolve(const Tensor &inputTensor)
         processedInput = inputTensor;
     }
 
-    // Apply padding
     Tensor paddedInput = addPadding(processedInput);
     auto paddedShape = paddedInput.getShape();
     size_t padded_h = paddedShape[1];

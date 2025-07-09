@@ -9,7 +9,7 @@ class Sigmoid : public ActivationLayer
 {
 public:
     ~Sigmoid() override = default;
-    vector<vector<vector<float>>> apply(const vector<vector<vector<float>>> &input) override;
+    Tensor apply(const Tensor &input) override;
 };
 
 #endif // SIGMOID_H

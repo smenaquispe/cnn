@@ -14,7 +14,7 @@ float CrossEntropyLoss::computeLoss(const Tensor &predictions, const Tensor &tar
     
     float loss = 0.0f;
     for (size_t i = 0; i < predShape[0]; ++i) {
-        float pred = std::max(predictions.at({i}), 1e-15f); // Avoid log(0)
+        float pred = std::max(predictions.at({i}), 1e-15f); 
         loss -= targets.at({i}) * std::log(pred);
     }
     
@@ -35,7 +35,7 @@ Tensor CrossEntropyLoss::computeGradient(const Tensor &predictions, const Tensor
     gradient.data.resize(gradient.totalSize());
     
     for (size_t i = 0; i < predShape[0]; ++i) {
-        float pred = std::max(predictions.at({i}), 1e-15f); // Avoid division by 0
+        float pred = std::max(predictions.at({i}), 1e-15f); 
         gradient.at({i}) = -targets.at({i}) / pred;
     }
     

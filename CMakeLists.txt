@@ -18,23 +18,9 @@ add_executable(cnn
     src/FlattenLayer.cpp
 )
 
-# Agregar el ejecutable de entrenamiento
-add_executable(cnn_training
-    main_training.cpp
-    src/NeuralNetwork.cpp
-    src/DenseLayer.cpp
-    src/Loss.cpp
-    src/DataGenerator.cpp
-    src/Filter.cpp
-    src/activation_layers/Relu.cpp
-    src/activation_layers/Softmax.cpp
-    src/pooling_layers/MaxPooling.cpp
-    src/FlattenLayer.cpp
-)
-
-# Agregar el ejecutable de ejemplo
-add_executable(example_usage
-    example_usage.cpp
+# Agregar el ejecutable de Fashion-MNIST
+add_executable(fashion_mnist_training
+    main_fashion_mnist.cpp
     src/NeuralNetwork.cpp
     src/DenseLayer.cpp
     src/Loss.cpp

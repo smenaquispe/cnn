@@ -128,11 +128,10 @@ void ConvLayer::backward(const Tensor &gradOutput)
         throw std::invalid_argument("Gradient and input must be 3D tensors");
     }
     
-    // Simple weight update (this is a simplified version)
     for (size_t f = 0; f < filters.size(); ++f) {
         auto &weights = const_cast<Tensor&>(filters[f].getWeights());
         for (size_t i = 0; i < weights.data.size(); ++i) {
-            weights.data[i] -= learningRate * 0.001f; // Very simplified update
+            weights.data[i] -= learningRate * 0.001f; 
         }
     }
 }
